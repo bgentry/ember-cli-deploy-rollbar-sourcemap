@@ -77,6 +77,51 @@ module.exports = {
           fs.writeFileSync(indexPath, index);
         }
       },
+
+      upload: function(context) {
+        var distFiles = this.readConfig('distFiles');
+        var projectName = this.readConfig('projectName');
+
+        // fetch vendor and project-specific js and map
+        var projectFileJs = distFiles.filter(minimatch.filter(`**/{${projectName},vendor}*.js`, {
+          matchBase: true
+        }));
+        var projectFileMap = distFiles.filter(minimatch.filter(`**/{${projectName},vendor}*.map`, {
+          matchBase: true
+        }));
+
+        var promiseArray = [];
+
+        for(var i = 0; i < projectFileJs.length; i++) {
+          // upload map to Rollbar using form-data
+
+          var mapFilePath = path.join(this.readConfig('distDir'), projectFileMap[i]);
+          var formData = new FormData();
+          formData.append('access_token', this.readConfig('accessServerToken'));
+          formData.append('version', this.readConfig('revisionKey'));
+          formData.append('minified_url', this.readConfig('minifedPrependUrl') + projectFileJs[i]);
+          var fileSize = fs.statSync(mapFilePath)['size'];
+          formData.append(
+            'source_map',
+            fs.createReadStream(mapFilePath),
+            { knownLength: fileSize }
+          );
+          var promise = new RSVP.Promise(function(resolve, reject) {
+            formData.submit('https://api.rollbar.com/api/1/sourcemap', function(error, result) {
+              if(error) {
+                reject(error);
+              }
+              result.resume();
+
+              result.on('end', function() {
+                resolve();
+              });
+            });
+          });
+          promiseArray.push(promise);
+        };
+        return RSVP.all(promiseArray);
+      }
     });
 
     return new DeployPlugin();
