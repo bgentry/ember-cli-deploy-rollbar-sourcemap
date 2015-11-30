@@ -19,7 +19,26 @@ module.exports = {
       name: options.name,
 
       defaultConfig: {
+        projectName: function(context) {
+          return context.project.pkg.name;
+        },
+        revisionKey: function(context) {
+          return context.revisionData && context.revisionData.revisionKey;
+        },
+        distFiles: function(context) {
+          return context.distFiles;
+        },
+        distDir: function(context) {
+          return context.distDir;
+        },
+        rollbarConfig: {
+          enabled: true,
+          environment: 'production',
+          captureUncaught: true
+        },
+        integrateRollbar: true
       },
+      requiredConfig: ['accessToken', 'accessServerToken', 'minifedPrependUrl'],
     });
 
     return new DeployPlugin();
