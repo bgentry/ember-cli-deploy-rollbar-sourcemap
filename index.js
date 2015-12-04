@@ -38,7 +38,7 @@ module.exports = {
         },
         integrateRollbar: true
       },
-      requiredConfig: ['accessToken', 'accessServerToken', 'minifedPrependUrl'],
+      requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl'],
 
       willUpload: function(context) {
         if(this.readConfig('integrateRollbar')) {
@@ -99,7 +99,7 @@ module.exports = {
           var formData = new FormData();
           formData.append('access_token', this.readConfig('accessServerToken'));
           formData.append('version', this.readConfig('revisionKey'));
-          formData.append('minified_url', this.readConfig('minifedPrependUrl') + projectFileJs[i]);
+          formData.append('minified_url', this.readConfig('minifiedPrependUrl') + projectFileJs[i]);
           var fileSize = fs.statSync(mapFilePath)['size'];
           formData.append(
             'source_map',
