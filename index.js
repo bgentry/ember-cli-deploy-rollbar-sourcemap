@@ -83,10 +83,10 @@ module.exports = {
         var projectName = this.readConfig('projectName');
 
         // fetch vendor and project-specific js and map
-        var projectFileJs = distFiles.filter(minimatch.filter(`**/{${projectName},vendor}*.js`, {
+        var projectFileJs = distFiles.filter(minimatch.filter('**/{${projectName},vendor}*.js', {
           matchBase: true
         }));
-        var projectFileMap = distFiles.filter(minimatch.filter(`**/{${projectName},vendor}*.map`, {
+        var projectFileMap = distFiles.filter(minimatch.filter('**/{${projectName},vendor}*.map', {
           matchBase: true
         }));
 
