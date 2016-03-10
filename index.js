@@ -96,10 +96,14 @@ module.exports = {
           // upload map to Rollbar using form-data
 
           var mapFilePath = path.join(this.readConfig('distDir'), projectFileMap[i]);
+          var minifiedPrependUrl = this.readConfig('minifiedPrependUrl');
+          if (typeof minifiedPrependUrl === 'function') {
+            minifiedPrependUrl = minifiedPrependUrl(context);
+          }
           var formData = new FormData();
           formData.append('access_token', this.readConfig('accessServerToken'));
           formData.append('version', this.readConfig('revisionKey'));
-          formData.append('minified_url', this.readConfig('minifiedPrependUrl') + projectFileJs[i]);
+          formData.append('minified_url', minifiedPrependUrl + projectFileJs[i]);
           var fileSize = fs.statSync(mapFilePath)['size'];
           formData.append(
             'source_map',
