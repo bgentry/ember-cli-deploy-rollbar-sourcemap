@@ -91,6 +91,8 @@ module.exports = {
         }));
 
         var promiseArray = [];
+        var accessServerToken = this.readConfig('accessServerToken');
+        var revisionKey = this.readConfig('revisionKey');
 
         for(var i = 0; i < projectFileJs.length; i++) {
           // upload map to Rollbar using form-data
@@ -100,29 +102,31 @@ module.exports = {
           if (typeof minifiedPrependUrl === 'function') {
             minifiedPrependUrl = minifiedPrependUrl(context);
           }
-          var formData = new FormData();
-          formData.append('access_token', this.readConfig('accessServerToken'));
-          formData.append('version', this.readConfig('revisionKey'));
-          formData.append('minified_url', minifiedPrependUrl + projectFileJs[i]);
-          var fileSize = fs.statSync(mapFilePath)['size'];
-          formData.append(
-            'source_map',
-            fs.createReadStream(mapFilePath),
-            { knownLength: fileSize }
-          );
-          var promise = new RSVP.Promise(function(resolve, reject) {
-            formData.submit('https://api.rollbar.com/api/1/sourcemap', function(error, result) {
-              if(error) {
-                reject(error);
-              }
-              result.resume();
-
-              result.on('end', function() {
-                resolve();
+          [].concat(minifiedPrependUrl).forEach(function(url) {
+            var formData = new FormData();
+            formData.append('access_token', accessServerToken);
+            formData.append('version', revisionKey);
+            formData.append('minified_url', url + projectFileJs[i]);
+            var fileSize = fs.statSync(mapFilePath)['size'];
+            formData.append(
+              'source_map',
+              fs.createReadStream(mapFilePath),
+              { knownLength: fileSize }
+            );
+            var promise = new RSVP.Promise(function(resolve, reject) {
+              formData.submit('https://api.rollbar.com/api/1/sourcemap', function(error, result) {
+                if(error) {
+                  reject(error);
+                }
+                result.resume();
+  
+                result.on('end', function() {
+                  resolve();
+                });
               });
             });
+            promiseArray.push(promise);
           });
-          promiseArray.push(promise);
         };
         return RSVP.all(promiseArray);
       }
