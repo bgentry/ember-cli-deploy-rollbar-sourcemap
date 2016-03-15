@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/netguru/ember-cli-deploy-rollbar.svg?branch=master)](https://travis-ci.org/netguru/ember-cli-deploy-rollbar)
+
 # ember-cli-deploy-rollbar
 
 > An ember-cli-deploy plugin that first __integrates Rollbar to your application__ and second __uploads your source maps to Rollbar__.
