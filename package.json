@@ -9,7 +9,7 @@
   "scripts": {
     "build": "ember build",
     "start": "ember server",
-    "test": "ember try:testall"
+    "test": "node tests/runner.js"
   },
   "repository": "https://github.com/netguru/ember-cli-deploy-rollbar",
   "engines": {
@@ -18,6 +18,8 @@
   "author": "Kuba Niechcial",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^2.2.0",
+    "chai-as-promised": "^5.0.0",
     "broccoli-asset-rev": "^2.2.0",
     "ember-cli": "1.13.12",
     "ember-cli-app-version": "^1.0.0",
@@ -35,7 +37,8 @@
     "ember-disable-proxy-controllers": "^1.0.1",
     "ember-export-application-global": "^1.0.4",
     "ember-disable-prototype-extensions": "^1.0.0",
-    "ember-try": "~0.0.8"
+    "ember-try": "~0.0.8",
+    "mocha": "^2.2.4"
   },
   "keywords": [
     "ember-addon",
@@ -48,7 +51,8 @@
     "form-data": "^1.0.0-rc3",
     "mime": "^1.3.4",
     "minimatch": "^2.0.4",
-    "rsvp": "^3.0.17"
+    "rsvp": "^3.0.17",
+    "glob": "^5.0.5"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
