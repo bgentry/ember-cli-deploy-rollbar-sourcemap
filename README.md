@@ -60,6 +60,17 @@ Rollbar server access token to allow uploading source maps to your account.
 
 Rollbar demands to upload both source map and URL to minified file. This config let's you define the prepend to URL your assets will be available after upload. E.g. if you are using `ember-cli-deploy-s3`, add the same string as in `fingerprint/prepend` option in your `ember-cli-deploy` file.
 
+This property can be a string or a function returning a string or an array of strings, which is passed the deploy `context`. Use a function here if you want to add multiple sources for multiple deploy locations. A possible scenario would be that you deploy both by git hash and a production deploy:
+
+```javascript
+minifiedPrependUrl: function(context) {
+  return [
+    'https://dev.example.com/' + context.revisionData.revisionKey + '/',
+    'https://app.example.com/'
+  ];
+}
+```
+
 ### enabled
 
 Defines internal `enabled` Rollbar config.
