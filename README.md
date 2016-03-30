@@ -85,7 +85,7 @@ Defines internal `enabled` Rollbar config.
 
 Defines internal `environment` Rollbar config.
 
-*Default:* `production`
+*Default:* environment setting from ember-cli-deploy-build || `production`
 *Alternatives:* any other env
 
 ### captureUncaught

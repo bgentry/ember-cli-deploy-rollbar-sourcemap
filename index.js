@@ -31,10 +31,21 @@ module.exports = {
         distDir: function(context) {
           return context.distDir;
         },
-        rollbarConfig: {
-          enabled: true,
-          environment: 'production',
-          captureUncaught: true
+        environment: function(context) {
+          var rollbarConfig = context.config.rollbar.rollbarConfig;
+          var buildConfig = context.config.build;
+          var environment = rollbarConfig ? rollbarConfig.environment : false;
+          return environment || buildConfig.environment || 'production';
+        },
+        enabled: function(context) {
+          var rollbarConfig = context.config.rollbar.rollbarConfig;
+          var enabled = rollbarConfig ? rollbarConfig.enabled : true;
+          return !(enabled === false);
+        },
+        captureUncaught: function(context) {
+          var rollbarConfig = context.config.rollbar.rollbarConfig;
+          var captureUncaught = rollbarConfig ? rollbarConfig.captureUncaught : true;
+          return !(captureUncaught === false);
         },
         integrateRollbar: true
       },
@@ -45,9 +56,9 @@ module.exports = {
           // setup rollbarConfig
           var rollbarConfig = {
             accessToken: this.readConfig('accessToken'),
-            enabled: this.readConfig('rollbarConfig').enabled,
-            captureUncaught: this.readConfig('rollbarConfig').captureUncaught,
-            environment: this.readConfig('rollbarConfig').environment,
+            enabled: this.readConfig('enabled'),
+            captureUncaught: this.readConfig('captureUncaught'),
+            environment: this.readConfig('environment'),
             payload: {
               client: {
                 javascript: {
@@ -133,7 +144,7 @@ module.exports = {
 
       didDeploy: function(context) {
         var accessServerToken = this.readConfig('accessServerToken');
-        var environment = this.readConfig('rollbarConfig').environment;
+        var environment = this.readConfig('environment');
         var revision = this.readConfig('revisionKey');
         var username = this.readConfig('username');
 
