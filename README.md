@@ -45,6 +45,7 @@ For detailed information on what plugin hooks are and how they work, please refe
 
 - `willUpload` (inject Rollbar snippet)
 - `upload` (upload source maps)
+- `didDeploy` (send information about deploy to Rollbar)
 
 ## Configuration Options
 
@@ -93,6 +94,13 @@ Defines internal `captureUncaught` Rollbar config.
 
 *Default:* `true`
 *Alternatives:* `false`
+
+### username
+
+Rollbar `local_username` config that is displayed in Deploys section.
+
+*Default:* `unknown user`
+*Alternatives:* any string or function returning string
 
 ## Prerequisites
 
