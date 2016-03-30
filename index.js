@@ -40,12 +40,12 @@ module.exports = {
         enabled: function(context) {
           var rollbarConfig = context.config.rollbar.rollbarConfig;
           var enabled = rollbarConfig ? rollbarConfig.enabled : true;
-          return enabled === false ? false : true;
+          return !(enabled === false);
         },
         captureUncaught: function(context) {
           var rollbarConfig = context.config.rollbar.rollbarConfig;
           var captureUncaught = rollbarConfig ? rollbarConfig.captureUncaught : true;
-          return captureUncaught === false ? false : true;
+          return !(captureUncaught === false);
         },
         integrateRollbar: true
       },
