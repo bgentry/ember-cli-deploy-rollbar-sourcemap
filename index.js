@@ -31,11 +31,11 @@ module.exports = {
         distDir: function(context) {
           return context.distDir;
         },
-        rollbarConfig: {
-          enabled: true,
-          environment: 'production',
-          captureUncaught: true
+        environment: function(context) {
+          return context.environment || context.config.build.environment || 'production';
         },
+        enabled: true,
+        captureUncaught: true,
         integrateRollbar: true
       },
       requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl'],
@@ -45,9 +45,9 @@ module.exports = {
           // setup rollbarConfig
           var rollbarConfig = {
             accessToken: this.readConfig('accessToken'),
-            enabled: this.readConfig('rollbarConfig').enabled,
-            captureUncaught: this.readConfig('rollbarConfig').captureUncaught,
-            environment: this.readConfig('rollbarConfig').environment,
+            enabled: this.readConfig('enabled'),
+            captureUncaught: this.readConfig('captureUncaught'),
+            environment: this.readConfig('environment'),
             payload: {
               client: {
                 javascript: {
@@ -133,7 +133,7 @@ module.exports = {
 
       didDeploy: function(context) {
         var accessServerToken = this.readConfig('accessServerToken');
-        var environment = this.readConfig('rollbarConfig').environment;
+        var environment = this.readConfig('environment');
         var revision = this.readConfig('revisionKey');
         var username = this.readConfig('username');
 
