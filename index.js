@@ -32,10 +32,21 @@ module.exports = {
           return context.distDir;
         },
         environment: function(context) {
-          return context.environment || context.config.build.environment || 'production';
+          var rollbarConfig = context.config.rollbar.rollbarConfig;
+          var buildConfig = context.config.build;
+          var environment = rollbarConfig ? rollbarConfig.environment : false;
+          return environment || buildConfig.environment || 'production';
         },
-        enabled: true,
-        captureUncaught: true,
+        enabled: function(context) {
+          var rollbarConfig = context.config.rollbar.rollbarConfig;
+          var enabled = rollbarConfig ? rollbarConfig.enabled : true;
+          return enabled === false ? false : true;
+        },
+        captureUncaught: function(context) {
+          var rollbarConfig = context.config.rollbar.rollbarConfig;
+          var captureUncaught = rollbarConfig ? rollbarConfig.captureUncaught : true;
+          return captureUncaught === false ? false : true;
+        },
         integrateRollbar: true
       },
       requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl'],
