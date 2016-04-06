@@ -49,7 +49,7 @@ module.exports = {
         },
         integrateRollbar: true
       },
-      requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl'],
+      requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl', 'rollbarFileURI'],
 
       willUpload: function(context) {
         if(this.readConfig('integrateRollbar')) {
@@ -70,11 +70,14 @@ module.exports = {
             }
           };
 
+          var rollbarFileURI = this.readConfig('rollbarFileURI') || 'https://d37gvrvc0wt4s1.cloudfront.net/js/v1.8/rollbar.min.js';
+
           // render rollbar snippet with fulfilled config
           var htmlSnippetPath = path.join(__dirname, 'addon', 'rollbar.html');
           var htmlContent = fs.readFileSync(htmlSnippetPath, 'utf-8');
           var snippetPath = path.join(__dirname, 'addon', 'snippet.js');
           var snippetContent = fs.readFileSync(snippetPath, 'utf-8');
+          snippetContent = snippetContent.replace('ROLLBAR_JSFILE_URI', rollbarFileURI);
 
           var rollbarSnippet = template(htmlContent)({
             rollbarConfig: JSON.stringify(rollbarConfig),
