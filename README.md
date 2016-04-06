@@ -102,6 +102,13 @@ Rollbar `local_username` config that is displayed in Deploys section.
 *Default:* `unknown user`
 *Alternatives:* any string or function returning string
 
+### rollbarFileURI
+
+Defines the URI to download the Rollbar JS file.
+
+*Default:* `https://d37gvrvc0wt4s1.cloudfront.net/js/v1.8/rollbar.min.js`
+*Alternatives:* any string that points to the file (e.g. https://mycdn.com/js/rollbar.min.js)
+
 ## Prerequisites
 
 The following properties are expected to be present on the deployment `context` object:
