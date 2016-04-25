@@ -47,9 +47,10 @@ module.exports = {
           var captureUncaught = rollbarConfig ? rollbarConfig.captureUncaught : true;
           return !(captureUncaught === false);
         },
-        integrateRollbar: true
+        integrateRollbar: true,
+        rollbarFileURI: 'https://d37gvrvc0wt4s1.cloudfront.net/js/v1.9/rollbar.min.js'
       },
-      requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl', 'rollbarFileURI'],
+      requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl'],
 
       willUpload: function(context) {
         if(this.readConfig('integrateRollbar')) {
@@ -70,7 +71,7 @@ module.exports = {
             }
           };
 
-          var rollbarFileURI = this.readConfig('rollbarFileURI') || 'https://d37gvrvc0wt4s1.cloudfront.net/js/v1.8/rollbar.min.js';
+          var rollbarFileURI = this.readConfig('rollbarFileURI');
 
           // render rollbar snippet with fulfilled config
           var htmlSnippetPath = path.join(__dirname, 'addon', 'rollbar.html');
