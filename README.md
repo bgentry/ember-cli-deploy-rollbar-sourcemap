@@ -102,6 +102,15 @@ Rollbar `local_username` config that is displayed in Deploys section.
 *Default:* `unknown user`
 *Alternatives:* any string or function returning string
 
+### additionalFiles
+
+Defines additional sourcemap files to be uploaded to Rollbar. Use this if you build .js files other than `projectName.js` and `vendor.js`.
+
+Set to an array of filenames excluding their extentions. For example in an app that builds `exta-functionality.js` and `additional-library.js` set to `['exta-functionality', 'additional-library']`.
+
+*Default:* `[]`
+*Alternatives:* an array of filenames without extensions
+
 ## Prerequisites
 
 The following properties are expected to be present on the deployment `context` object:
