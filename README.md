@@ -109,6 +109,15 @@ Defines the URI to download the Rollbar JS file.
 *Default:* `https://d37gvrvc0wt4s1.cloudfront.net/js/v1.8/rollbar.min.js`
 *Alternatives:* any string that points to the file (e.g. https://mycdn.com/js/rollbar.min.js)
 
+### additionalFiles
+
+Defines additional sourcemap files to be uploaded to Rollbar. Use this if you build .js files other than `projectName.js` and `vendor.js`.
+
+Set to an array of filenames excluding their extentions. For example in an app that builds `exta-functionality.js` and `additional-library.js` set to `['exta-functionality', 'additional-library']`.
+
+*Default:* `[]`
+*Alternatives:* an array of filenames without extensions
+
 ## Prerequisites
 
 The following properties are expected to be present on the deployment `context` object:

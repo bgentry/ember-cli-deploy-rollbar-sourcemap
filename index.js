@@ -48,6 +48,7 @@ module.exports = {
           return !(captureUncaught === false);
         },
         integrateRollbar: true,
+        additionalFiles: [],
         rollbarFileURI: 'https://d37gvrvc0wt4s1.cloudfront.net/js/v1.9/rollbar.min.js'
       },
       requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl'],
@@ -96,12 +97,19 @@ module.exports = {
       upload: function(context) {
         var distFiles = this.readConfig('distFiles');
         var projectName = this.readConfig('projectName');
+        var additionalFiles = this.readConfig('additionalFiles');
+
+        var filePattern = projectName + ',vendor';
+
+        if(additionalFiles.length) {
+          filePattern += ',' + additionalFiles.join(',');
+        }
 
         // fetch vendor and project-specific js and map
-        var projectFileJs = distFiles.filter(minimatch.filter('**/{' + projectName + ',vendor}*.js', {
+        var projectFileJs = distFiles.filter(minimatch.filter('**/{' + filePattern + '}*.js', {
           matchBase: true
         }));
-        var projectFileMap = distFiles.filter(minimatch.filter('**/{' + projectName + ',vendor}*.map', {
+        var projectFileMap = distFiles.filter(minimatch.filter('**/{' + filePattern + '}*.map', {
           matchBase: true
         }));
 
