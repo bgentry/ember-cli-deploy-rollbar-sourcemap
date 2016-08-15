@@ -41,7 +41,7 @@ ember install ember-cli-deploy-rollbar
 
 ## ember-cli-deploy Hooks Implemented
 
-For detailed information on what plugin hooks are and how they work, please refer to the [Plugin Documentation][1].
+For detailed information on what plugin hooks are and how they work, please refer to the [Plugin Documentation][6].
 
 - `willUpload` (inject Rollbar snippet)
 - `upload` (upload source maps)
@@ -49,7 +49,7 @@ For detailed information on what plugin hooks are and how they work, please refe
 
 ## Configuration Options
 
-For detailed information on how configuration of plugins works, please refer to the [Plugin Documentation][1].
+For detailed information on how configuration of plugins works, please refer to the [Plugin Documentation][7].
 
 ### accessToken (required)
 
@@ -136,8 +136,12 @@ The following properties are expected to be present on the deployment `context` 
 * If you are using gzipping, make sure that you are not gzipping source maps - Rollbar will not accept gzipped files.
 * If you bump in any other issue in your deployment flow, give me a sign and I'll try to make this addon more flexible for you.
 
-[1]: http://ember-cli.github.io/ember-cli-deploy/plugins "Plugin Documentation"
+[1]: http://ember-cli-deploy.com/docs/v0.6.x/ "Plugin Documentation"
 [2]: https://github.com/ember-cli-deploy/ember-cli-deploy-build "ember-cli-deploy-build"
 [3]: https://github.com/ember-cli/ember-cli-deploy "ember-cli-deploy"
 [4]: https://github.com/ember-cli-deploy/ember-cli-deploy-revision-data "ember-cli-deploy-revision-data"
 [5]: https://rollbar.com/docs/source-maps/ "Rollbar Documentation"
+[6]: http://ember-cli-deploy.com/docs/v0.6.x/pipeline-hooks/ "Plugin
+Documentation"
+[7]: http://ember-cli-deploy.com/docs/v0.6.x/configuration-overview/ "Plugin
+Documentation"
