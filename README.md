@@ -141,7 +141,5 @@ The following properties are expected to be present on the deployment `context` 
 [3]: https://github.com/ember-cli/ember-cli-deploy "ember-cli-deploy"
 [4]: https://github.com/ember-cli-deploy/ember-cli-deploy-revision-data "ember-cli-deploy-revision-data"
 [5]: https://rollbar.com/docs/source-maps/ "Rollbar Documentation"
-[6]: http://ember-cli-deploy.com/docs/v0.6.x/pipeline-hooks/ "Plugin
-Documentation"
-[7]: http://ember-cli-deploy.com/docs/v0.6.x/configuration-overview/ "Plugin
-Documentation"
+[6]: http://ember-cli-deploy.com/docs/v0.6.x/pipeline-hooks/ "Plugin Documentation"
+[7]: http://ember-cli-deploy.com/docs/v0.6.x/configuration-overview/ "Plugin Documentation"
