@@ -89,7 +89,7 @@ module.exports = {
           // replace rollbar metatag with rollbar snippet in index.html
           var indexPath = path.join(context.distDir, "index.html");
           var index = fs.readFileSync(indexPath, 'utf8');
-          var index = index.replace('<meta name="rollbar"/>', rollbarSnippet);
+          index = index.replace('<meta name="rollbar"/>', rollbarSnippet);
           fs.writeFileSync(indexPath, index);
         }
       },
@@ -155,6 +155,12 @@ module.exports = {
       },
 
       didDeploy: function(context) {
+        var didDeployHook = this.readConfig('didDeploy');
+
+        if (didDeployHook) {
+          return didDeployHook.call(this, context);
+        }
+
         var accessServerToken = this.readConfig('accessServerToken');
         var environment = this.readConfig('environment');
         var revision = this.readConfig('revisionKey');
