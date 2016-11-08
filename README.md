@@ -132,7 +132,7 @@ The following properties are expected to be present on the deployment `context` 
 * [ember-cli-deploy-s3](https://github.com/ember-cli-deploy/ember-cli-deploy-s3)
 
 ## Known issues
-* You must enable source maps in your `ember-cli-deploy` file, even in `production` env. However, you don't need to upload them anywhere (they won't be available online) - they are only needed during `upload` phase in deploy pipeline.
+* You must enable source maps in your `ember-cli-build.js` file, even in `production` env. However, you don't need to upload them anywhere (they won't be available online) - they are only needed during `upload` phase in deploy pipeline.
 * If you are using gzipping, make sure that you are not gzipping source maps - Rollbar will not accept gzipped files.
 * If you bump in any other issue in your deployment flow, give me a sign and I'll try to make this addon more flexible for you.
 
