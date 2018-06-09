@@ -136,6 +136,37 @@ The following properties are expected to be present on the deployment `context` 
 * If you are using gzipping, make sure that you are not gzipping source maps - Rollbar will not accept gzipped files.
 * If you bump in any other issue in your deployment flow, give me a sign and I'll try to make this addon more flexible for you.
 
+## Development
+
+### Installation
+
+* `git clone https://github.com/netguru/ember-cli-deploy-rollbar`
+* `cd my-addon`
+* `npm install`
+
+### Linting
+
+* `npm run lint:js`
+* `npm run lint:js -- --fix`
+
+### Running tests
+
+* `ember test` – Runs the test suite on the current Ember version
+* `ember test --server` – Runs the test suite in "watch mode"
+* `ember try:each` – Runs the test suite against multiple Ember versions
+
+### Running the dummy application
+
+* `ember serve`
+* Visit the dummy application at [http://localhost:4200](http://localhost:4200).
+
+For more information on using ember-cli, visit [https://ember-cli.com/](https://ember-cli.com/).
+
+License
+------------------------------------------------------------------------------
+
+This project is licensed under the [MIT License](LICENSE.md).
+
 [1]: http://ember-cli-deploy.com/docs/v0.6.x/ "Plugin Documentation"
 [2]: https://github.com/ember-cli-deploy/ember-cli-deploy-build "ember-cli-deploy-build"
 [3]: https://github.com/ember-cli/ember-cli-deploy "ember-cli-deploy"
