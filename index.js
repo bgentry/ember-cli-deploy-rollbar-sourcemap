@@ -17,7 +17,7 @@ module.exports = {
     var DeployPlugin = BasePlugin.extend({
       name: options.name,
 
-      defaultConfig: {
+      defaultConfig: Object.freeze({
         projectName: function(context) {
           return context.project.pkg.name;
         },
@@ -49,8 +49,8 @@ module.exports = {
         integrateRollbar: true,
         additionalFiles: [],
         rollbarFileURI: 'https://d37gvrvc0wt4s1.cloudfront.net/js/v1.9/rollbar.min.js'
-      },
-      requiredConfig: ['accessToken', 'accessServerToken', 'minifiedPrependUrl'],
+      }),
+      requiredConfig: Object.freeze(['accessToken', 'accessServerToken', 'minifiedPrependUrl']),
 
       willUpload: function(context) {
         if(this.readConfig('integrateRollbar')) {
@@ -149,7 +149,7 @@ module.exports = {
             });
             promiseArray.push(promise);
           });
-        };
+        }
         return RSVP.all(promiseArray);
       },
 
