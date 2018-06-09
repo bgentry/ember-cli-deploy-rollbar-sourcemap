@@ -3,8 +3,8 @@
 var RSVP = require('rsvp');
 var fs = require('fs');
 var path = require('path');
-var minimatch = require('minimatch');
 var FormData = require('form-data');
+var zlib = require('zlib');
 
 var BasePlugin = require('ember-cli-deploy-plugin');
 
@@ -16,17 +16,21 @@ module.exports = {
       name: options.name,
 
       defaultConfig: Object.freeze({
-        projectName: function(context) {
-          return context.project.pkg.name;
-        },
-        revisionKey: function(context) {
-          return context.revisionData && context.revisionData.revisionKey;
+        distDir: function(context) {
+          return context.distDir;
         },
         distFiles: function(context) {
           return context.distFiles;
         },
-        distDir: function(context) {
-          return context.distDir;
+        gzippedFiles: function(context) {
+          return context.gzippedFiles || [];
+        },
+        revisionKey: function(context) {
+          if (context.revisionData) {
+            return context.revisionData.revisionKey;
+          } else {
+            return process.env.SOURCE_VERSION || '';
+          }
         },
         environment: function(context) {
           var rollbarConfig = context.config.rollbar.rollbarConfig;
@@ -36,65 +40,51 @@ module.exports = {
         },
         additionalFiles: [],
       }),
-      requiredConfig: Object.freeze(['accessServerToken', 'minifiedPrependUrl']),
+      requiredConfig: Object.freeze(['accessServerToken', 'publicUrl']),
 
-      upload: function(context) {
+      upload: function() {
+        var log = this.log.bind(this);
+        var distDir = this.readConfig('distDir');
         var distFiles = this.readConfig('distFiles');
-        var projectName = this.readConfig('projectName');
-        var additionalFiles = this.readConfig('additionalFiles');
-
-        var filePattern = projectName + ',vendor';
-
-        if(additionalFiles.length) {
-          filePattern += ',' + additionalFiles.join(',');
-        }
-
-        // fetch vendor and project-specific js and map
-        var projectFileJs = distFiles.filter(minimatch.filter('**/{' + filePattern + '}*.js', {
-          matchBase: true
-        }));
-        var projectFileMap = distFiles.filter(minimatch.filter('**/{' + filePattern + '}*.map', {
-          matchBase: true
-        }));
-
-        var promiseArray = [];
         var accessServerToken = this.readConfig('accessServerToken');
         var revisionKey = this.readConfig('revisionKey');
 
-        for(var i = 0; i < projectFileJs.length; i++) {
-          // upload map to Rollbar using form-data
+        log('Uploading sourcemaps to Rollbar', { verbose: true });
 
-          var mapFilePath = path.join(this.readConfig('distDir'), projectFileMap[i]);
-          var minifiedPrependUrl = this.readConfig('minifiedPrependUrl');
-          if (typeof minifiedPrependUrl === 'function') {
-            minifiedPrependUrl = minifiedPrependUrl(context);
-          }
-          [].concat(minifiedPrependUrl).forEach(function(url) {
-            var formData = new FormData();
-            formData.append('access_token', accessServerToken);
-            formData.append('version', revisionKey);
-            formData.append('minified_url', url + projectFileJs[i]);
-            var fileSize = fs.statSync(mapFilePath)['size'];
-            formData.append(
-              'source_map',
-              fs.createReadStream(mapFilePath),
-              { knownLength: fileSize }
-            );
-            var promise = new RSVP.Promise(function(resolve, reject) {
-              formData.submit('https://api.rollbar.com/api/1/sourcemap', function(error, result) {
-                if(error) {
-                  reject(error);
-                }
-                result.resume();
+        var publicUrl = this.readConfig('publicUrl');
 
-                result.on('end', function() {
-                  resolve();
-                });
+        var promiseArray = [];
+        var jsMapPairs = fetchJSMapPairs(distFiles, publicUrl, distDir);
+
+        for (var i = 0; i < jsMapPairs.length; i++) {
+          var mapFilePath = jsMapPairs[i].mapFile;
+          var jsFilePath = jsMapPairs[i].jsFile;
+          var fileSize = fs.statSync(mapFilePath)['size'];
+
+          var formData = new FormData();
+          formData.append('access_token', accessServerToken);
+          formData.append('minified_url', jsFilePath);
+          formData.append(
+            'source_map',
+            fs.createReadStream(mapFilePath),
+            { knownLength: fileSize }
+          );
+          formData.append('version', revisionKey);
+          var promise = new RSVP.Promise(function(resolve, reject) {
+            formData.submit('https://api.rollbar.com/api/1/sourcemap', function(error, result) {
+              if(error) {
+                reject(error);
+              }
+              result.resume();
+
+              result.on('end', function() {
+                resolve();
               });
             });
-            promiseArray.push(promise);
           });
+          promiseArray.push(promise);
         }
+
         return RSVP.all(promiseArray);
       },
 
@@ -132,9 +122,55 @@ module.exports = {
             });
           });
         });
+      },
+
+      _readSourceMap(mapFilePath) {
+        var relativeMapFilePath = mapFilePath.replace(this.readConfig('distDir') + '/', '');
+        if (this.readConfig('gzippedFiles').indexOf(relativeMapFilePath) !== -1) {
+          // When the source map is gzipped, we need to eagerly load it into a buffer
+          // so that the actual content length is known.
+          return {
+            value: zlib.unzipSync(fs.readFileSync(mapFilePath)),
+            options: {
+              filename: path.basename(mapFilePath),
+            }
+          };
+        } else {
+          return fs.createReadStream(mapFilePath);
+        }
       }
     });
 
     return new DeployPlugin();
   },
 };
+
+function fetchJSMapPairs(distFiles, publicUrl, distUrl) {
+  var jsFiles = indexByBaseFilename(fetchFilePaths(distFiles, '', 'js'));
+  return fetchFilePaths(distFiles, '', 'map').map(function(mapFile) {
+    return {
+      mapFile: distUrl + mapFile,
+      jsFile: publicUrl + jsFiles[getBaseFilename(mapFile)]
+    };
+  });
+}
+
+function indexByBaseFilename(files) {
+  return files.reduce(function(result, file) {
+    result[getBaseFilename(file)] = file;
+    return result;
+  }, {});
+}
+
+function getBaseFilename(file) {
+  return file.replace(/-[0-9a-f]+\.(js|map)$/, '');
+}
+
+function fetchFilePaths(distFiles, basePath, type) {
+  return distFiles.filter(function(filePath) {
+    return new RegExp('assets/.*\\.' + type + '$').test(filePath);
+  })
+  .map(function(filePath) {
+    return basePath + '/' + filePath;
+  });
+}
