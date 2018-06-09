@@ -3,8 +3,6 @@
 var RSVP = require('rsvp');
 var fs = require('fs');
 var path = require('path');
-var merge = require('lodash/object/merge');
-var template = require('lodash/string/template');
 var minimatch = require('minimatch');
 var FormData = require('form-data');
 
@@ -36,62 +34,9 @@ module.exports = {
           var environment = rollbarConfig ? rollbarConfig.environment : false;
           return environment || buildConfig.environment || 'production';
         },
-        enabled: function(context) {
-          var rollbarConfig = context.config.rollbar.rollbarConfig;
-          var enabled = rollbarConfig ? rollbarConfig.enabled : true;
-          return !(enabled === false);
-        },
-        captureUncaught: function(context) {
-          var rollbarConfig = context.config.rollbar.rollbarConfig;
-          var captureUncaught = rollbarConfig ? rollbarConfig.captureUncaught : true;
-          return !(captureUncaught === false);
-        },
-        integrateRollbar: true,
         additionalFiles: [],
-        rollbarFileURI: 'https://d37gvrvc0wt4s1.cloudfront.net/js/v1.9/rollbar.min.js'
       }),
       requiredConfig: Object.freeze(['accessToken', 'accessServerToken', 'minifiedPrependUrl']),
-
-      willUpload: function(context) {
-        if(this.readConfig('integrateRollbar')) {
-          // setup rollbarConfig
-          var rollbarConfig = {
-            accessToken: this.readConfig('accessToken'),
-            enabled: this.readConfig('enabled'),
-            captureUncaught: this.readConfig('captureUncaught'),
-            environment: this.readConfig('environment'),
-            payload: {
-              client: {
-                javascript: {
-                  source_map_enabled: true,
-                  code_version: this.readConfig('revisionKey'),
-                  guess_uncaught_frames: true
-                }
-              }
-            }
-          };
-
-          var rollbarFileURI = this.readConfig('rollbarFileURI');
-
-          // render rollbar snippet with fulfilled config
-          var htmlSnippetPath = path.join(__dirname, 'addon', 'rollbar.html');
-          var htmlContent = fs.readFileSync(htmlSnippetPath, 'utf-8');
-          var snippetPath = path.join(__dirname, 'addon', 'snippet.js');
-          var snippetContent = fs.readFileSync(snippetPath, 'utf-8');
-          snippetContent = snippetContent.replace('ROLLBAR_JSFILE_URI', rollbarFileURI);
-
-          var rollbarSnippet = template(htmlContent)({
-            rollbarConfig: JSON.stringify(rollbarConfig),
-            rollbarSnippet: snippetContent
-          });
-
-          // replace rollbar metatag with rollbar snippet in index.html
-          var indexPath = path.join(context.distDir, "index.html");
-          var index = fs.readFileSync(indexPath, 'utf8');
-          index = index.replace('<meta name="rollbar"/>', rollbarSnippet);
-          fs.writeFileSync(indexPath, index);
-        }
-      },
 
       upload: function(context) {
         var distFiles = this.readConfig('distFiles');
@@ -192,10 +137,4 @@ module.exports = {
 
     return new DeployPlugin();
   },
-
-  contentFor: function(type) {
-    if (type === 'head') {
-      return '<meta name="rollbar"/>';
-    }
-  }
 };
