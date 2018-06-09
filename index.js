@@ -36,7 +36,7 @@ module.exports = {
         },
         additionalFiles: [],
       }),
-      requiredConfig: Object.freeze(['accessToken', 'accessServerToken', 'minifiedPrependUrl']),
+      requiredConfig: Object.freeze(['accessServerToken', 'minifiedPrependUrl']),
 
       upload: function(context) {
         var distFiles = this.readConfig('distFiles');

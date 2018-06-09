@@ -51,10 +51,6 @@ For detailed information on what plugin hooks are and how they work, please refe
 
 For detailed information on how configuration of plugins works, please refer to the [Plugin Documentation][7].
 
-### accessToken (required)
-
-Rollbar client access token to trigger errors.
-
 ### accessServerToken (required)
 
 Rollbar server access token to allow uploading source maps to your account.
