@@ -1,16 +1,11 @@
-/*jshint globalstrict: true*/
-'use strict';
+import { module, test } from "qunit";
+import { setupTest } from "ember-qunit";
+import subject from "../../index";
 
-var assert  = require('ember-cli/tests/helpers/assert');
+module('Unit | rollbar plugin', function(hooks) {
+  setupTest(hooks);
 
-describe('rollbar plugin', function() {
-  var subject;
-
-  beforeEach(function() {
-    subject = require('../../index');
-  });
-
-  it('has a name', function() {
+  test('has a name', function(assert) {
     var plugin = subject.createDeployPlugin({
       name: 'test-plugin'
     });
@@ -18,7 +13,7 @@ describe('rollbar plugin', function() {
     assert.equal(plugin.name, 'test-plugin');
   });
 
-  it('implements the correct hooks', function() {
+  test('implements the correct hooks', function(assert) {
     var plugin = subject.createDeployPlugin({
       name: 'test-plugin'
     });
@@ -27,7 +22,7 @@ describe('rollbar plugin', function() {
     assert.equal(typeof plugin.upload, 'function');
   });
 
-  it('implements the correct contentFor func', function() {
+  test('implements the correct contentFor func', function(assert) {
     var headContent = subject.contentFor('head');
 
     assert.equal(headContent, '<meta name="rollbar"/>');
