@@ -9,7 +9,7 @@ var zlib = require('zlib');
 var BasePlugin = require('ember-cli-deploy-plugin');
 
 module.exports = {
-  name: 'ember-cli-deploy-rollbar',
+  name: 'ember-cli-deploy-rollbar-sourcemap',
 
   createDeployPlugin: function(options) {
     var DeployPlugin = BasePlugin.extend({
@@ -33,7 +33,7 @@ module.exports = {
           }
         },
         environment: function(context) {
-          var rollbarConfig = context.config.rollbar.rollbarConfig;
+          var rollbarConfig = context.config["rollbar-sourcemap"].rollbarConfig;
           var buildConfig = context.config.build;
           var environment = rollbarConfig ? rollbarConfig.environment : false;
           return environment || buildConfig.environment || 'production';

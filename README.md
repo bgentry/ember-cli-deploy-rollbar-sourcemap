@@ -1,12 +1,15 @@
-[![Build Status](https://travis-ci.org/netguru/ember-cli-deploy-rollbar.svg?branch=master)](https://travis-ci.org/netguru/ember-cli-deploy-rollbar)
+[![Build Status](https://travis-ci.org/netguru/ember-cli-deploy-rollbar-sourcemap.svg?branch=master)](https://travis-ci.org/netguru/ember-cli-deploy-rollbar-sourcemap)
 
-# ember-cli-deploy-rollbar
+# ember-cli-deploy-rollbar-sourcemap
 
-> An ember-cli-deploy plugin that first __integrates Rollbar to your application__ and second __uploads your source maps to Rollbar__.
+> An ember-cli-deploy plugin that uploads your source maps to Rollbar.
 
-This plugin will integrate Rollbar into your `index.html` file and uploads generated source maps via Rollbar API. During upload of the source maps to Rollbar you must provide `source_code` string that will match the error raised in Rollbar with the same value. To do this, Rollbar snippet is injected into `index.html` after the revision data is generated with revision key as `source_code`. After all, the plugin uploads the source maps with the same revision key as injected into `index.html`.
+This plugin uploads generated source maps to the Rollbar API. During upload of the source maps to Rollbar you must provide `source_code` string that will match the error raised in Rollbar with the same value. To do this, Rollbar snippet is injected into `index.html` after the revision data is generated with revision key as `source_code`. After all, the plugin uploads the source maps with the same revision key as injected into `index.html`.
 
 [You can take a look here how Rollbar defines its flow with source maps][5]
+
+This library was adapted from [@netguru](https://github.com/netguru)'s [ember-cli-deploy-rollbar](https://github.com/netguru/ember-cli-deploy-rollbar)
+and [ember-cli-deploy-bugsnag](https://github.com/IcarusWorks/ember-cli-deploy-bugsnag).
 
 ## What is an ember-cli-deploy plugin?
 
@@ -23,7 +26,7 @@ To get up and running quickly, do the following:
 - Install this plugin
 
 ```bash
-$ ember install ember-cli-deploy-rollbar
+$ ember install ember-cli-deploy-rollbar-sourcemap
 ```
 
 - Run the pipeline
@@ -36,7 +39,7 @@ $ ember deploy
 Run the following command in your terminal:
 
 ```bash
-ember install ember-cli-deploy-rollbar
+ember install ember-cli-deploy-rollbar-sourcemap
 ```
 
 ## ember-cli-deploy Hooks Implemented
@@ -50,6 +53,14 @@ For detailed information on what plugin hooks are and how they work, please refe
 ## Configuration Options
 
 For detailed information on how configuration of plugins works, please refer to the [Plugin Documentation][7].
+
+Configure this addon in your `deploy.js` `ENV`:
+
+```js
+'rollbar-sourcemap': {
+  accessServerToken: process.env.ROLLBAR_SERVER_ACCESS_TOKEN,
+},
+```
 
 ### accessServerToken (required)
 
@@ -125,7 +136,7 @@ The following properties are expected to be present on the deployment `context` 
 
 ### Installation
 
-* `git clone https://github.com/netguru/ember-cli-deploy-rollbar`
+* `git clone https://github.com/netguru/ember-cli-deploy-rollbar-sourcemap`
 * `cd my-addon`
 * `npm install`
 
