@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-deploy-rollbar-sourcemap",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "ember-cli-deploy addon that uploads source maps to Rollbar's API",
   "keywords": [
     "ember-addon",
@@ -22,12 +22,13 @@
   },
   "dependencies": {
     "ember-cli-babel": "^6.6.0",
-    "ember-cli-deploy-plugin": "^0.2.0",
-    "form-data": "^1.0.0-rc3",
+    "ember-cli-deploy-plugin": "^0.2.9",
     "glob": "^5.0.5",
     "lodash": "^3.10.1",
     "mime": "^1.3.4",
     "minimatch": "^2.0.4",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.1",
     "rsvp": "^3.0.17"
   },
   "devDependencies": {

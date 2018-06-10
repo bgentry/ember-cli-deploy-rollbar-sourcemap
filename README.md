@@ -29,6 +29,23 @@ To get up and running quickly, do the following:
 $ ember install ember-cli-deploy-rollbar-sourcemap
 ```
 
+- Enable sourcemaps for all environments in `ember-cli-build.js`:
+
+```js
+/* jshint node:true */
+/* global require, module */
+var EmberApp = require('ember-cli/lib/broccoli/ember-app');
+
+module.exports = function(defaults) {
+  var app = new EmberApp(defaults, {
+    // …
+    sourcemaps: {
+      enabled: true, // This allows sourcemaps to be generated in all environments
+      extensions: ['js']
+    }
+  });
+```
+
 - Run the pipeline
 
 ```bash

@@ -3,7 +3,7 @@
 var RSVP = require('rsvp');
 var fs = require('fs');
 var path = require('path');
-var FormData = require('form-data');
+var request = require('request-promise');
 var zlib = require('zlib');
 
 var BasePlugin = require('ember-cli-deploy-plugin');
@@ -59,33 +59,27 @@ module.exports = {
         for (var i = 0; i < jsMapPairs.length; i++) {
           var mapFilePath = jsMapPairs[i].mapFile;
           var jsFilePath = jsMapPairs[i].jsFile;
-          var fileSize = fs.statSync(mapFilePath)['size'];
 
-          var formData = new FormData();
-          formData.append('access_token', accessServerToken);
-          formData.append('minified_url', jsFilePath);
-          formData.append(
-            'source_map',
-            fs.createReadStream(mapFilePath),
-            { knownLength: fileSize }
-          );
-          formData.append('version', revisionKey);
-          var promise = new RSVP.Promise(function(resolve, reject) {
-            formData.submit('https://api.rollbar.com/api/1/sourcemap', function(error, result) {
-              if(error) {
-                reject(error);
-              }
-              result.resume();
+          var formData = {
+            access_token: accessServerToken,
+            minified_url: jsFilePath,
+            source_map: this._readSourceMap(mapFilePath),
+            version: revisionKey,
+          };
 
-              result.on('end', function() {
-                resolve();
-              });
-            });
+          log(`Uploading sourcemap to Rollbar: version=${revisionKey} minified_url=${jsFilePath}`, { verbose: true });
+          var promise = request({
+            uri: 'https://api.rollbar.com/api/1/sourcemap',
+            method: 'POST',
+            formData: formData
           });
           promiseArray.push(promise);
         }
 
-        return RSVP.all(promiseArray);
+        return RSVP.all(promiseArray)
+          .then(function() {
+            log('Finished uploading sourcemaps', { verbose: true });
+          });
       },
 
       didDeploy: function(context) {
@@ -100,27 +94,20 @@ module.exports = {
         var revision = this.readConfig('revisionKey');
         var username = this.readConfig('username');
 
-        var formData = new FormData();
-
-        formData.append('access_token', accessServerToken);
-        formData.append('revision', revision);
-        formData.append('environment', environment);
+        var formData = {
+          access_token: accessServerToken,
+          environment: environment,
+          revision: revision,
+        };
 
         if (username) {
-          formData.append('local_username', username);
+          formData.local_username = username;
         }
 
-        return new RSVP.Promise(function(resolve, reject) {
-          formData.submit('https://api.rollbar.com/api/1/deploy', function(error, result) {
-            if (error) {
-              reject(error);
-            }
-            result.resume();
-
-            result.on('end', function() {
-              resolve();
-            });
-          });
+        return request({
+          uri: 'https://api.rollbar.com/api/1/deploy',
+          method: 'POST',
+          formData: formData
         });
       },
 
