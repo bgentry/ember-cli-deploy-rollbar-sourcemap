@@ -70,6 +70,7 @@ module.exports = {
             { knownLength: fileSize }
           );
           formData.append('version', revisionKey);
+          log(`Uploading sourcemap to Rollbar: version=${revisionKey} minified_url=${jsFilePath}`, { verbose: true });
           var promise = new RSVP.Promise(function(resolve, reject) {
             formData.submit('https://api.rollbar.com/api/1/sourcemap', function(error, result) {
               if(error) {
