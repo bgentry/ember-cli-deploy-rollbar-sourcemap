@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "ember-cli-babel": "^6.6.0",
-    "ember-cli-deploy-plugin": "^0.2.0",
+    "ember-cli-deploy-plugin": "^0.2.9",
     "form-data": "^2.3.2",
     "glob": "^5.0.5",
     "lodash": "^3.10.1",
