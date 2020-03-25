@@ -2,7 +2,7 @@ import { module, test } from "qunit";
 import { setupTest } from "ember-qunit";
 import subject from "../../index";
 
-module('Unit | rollbar plugin', function(hooks) {
+module('Unit | Honeybadger plugin', function(hooks) {
   setupTest(hooks);
 
   test('has a name', function(assert) {
@@ -25,6 +25,6 @@ module('Unit | rollbar plugin', function(hooks) {
   test('implements the correct contentFor func', function(assert) {
     var headContent = subject.contentFor('head');
 
-    assert.equal(headContent, '<meta name="rollbar"/>');
+    assert.equal(headContent, '<meta name="honeybadger"/>');
   });
 });

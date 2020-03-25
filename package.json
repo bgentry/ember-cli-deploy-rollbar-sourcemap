@@ -1,7 +1,7 @@
 {
-  "name": "ember-cli-deploy-rollbar-sourcemap",
+  "name": "ember-cli-deploy-honeybadger-sourcemap",
   "version": "0.2.0",
-  "description": "ember-cli-deploy addon that uploads source maps to Rollbar's API",
+  "description": "ember-cli-deploy addon that uploads source maps to Honeybadger's API",
   "keywords": [
     "ember-addon",
     "ember-cli-deploy-plugin"
@@ -12,7 +12,7 @@
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "https://github.com/bgentry/ember-cli-deploy-rollbar-sourcemap",
+  "repository": "https://github.com/bgentry/ember-cli-deploy-honeybadger-sourcemap",
   "scripts": {
     "build": "ember build",
     "lint:js": "eslint ./*.js addon addon-test-support app blueprints config lib server test-support tests",

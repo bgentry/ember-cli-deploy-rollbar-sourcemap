@@ -9,7 +9,7 @@ var zlib = require('zlib');
 var BasePlugin = require('ember-cli-deploy-plugin');
 
 module.exports = {
-  name: 'ember-cli-deploy-rollbar-sourcemap',
+  name: 'ember-cli-deploy-honeybadger-sourcemap',
 
   createDeployPlugin: function(options) {
     var DeployPlugin = BasePlugin.extend({
@@ -33,43 +33,45 @@ module.exports = {
           }
         },
         environment: function(context) {
-          var rollbarConfig = context.config["rollbar-sourcemap"].rollbarConfig;
+          var HoneybadgerConfig = context.config["honeybadger-sourcemap"].honeybadgerConfig;
           var buildConfig = context.config.build;
-          var environment = rollbarConfig ? rollbarConfig.environment : false;
+          var environment = HoneybadgerConfig ? HoneybadgerConfig.environment : false;
           return environment || buildConfig.environment || 'production';
         },
         additionalFiles: [],
       }),
-      requiredConfig: Object.freeze(['accessServerToken', 'publicUrl']),
+      requiredConfig: Object.freeze(['apiKey', 'publicUrl']),
 
       upload: function() {
         var log = this.log.bind(this);
         var distDir = this.readConfig('distDir');
         var distFiles = this.readConfig('distFiles');
-        var accessServerToken = this.readConfig('accessServerToken');
+        var apiKey = this.readConfig('apiKey');
         var revisionKey = this.readConfig('revisionKey');
 
-        log('Uploading sourcemaps to Rollbar', { verbose: true });
+        log('Uploading sourcemaps to Honeybadger', { verbose: true });
 
         var publicUrl = this.readConfig('publicUrl');
 
         var promiseArray = [];
-        var jsMapPairs = fetchJSMapPairs(distFiles, publicUrl, distDir);
+        var jsMapPairs = fetchJSMapPairs(distFiles, 'dist', distDir);
 
         for (var i = 0; i < jsMapPairs.length; i++) {
           var mapFilePath = jsMapPairs[i].mapFile;
           var jsFilePath = jsMapPairs[i].jsFile;
+          var minifiedFilePath = jsMapPairs[i].minifiedFile;
 
           var formData = {
-            access_token: accessServerToken,
+            api_key: apiKey,
             minified_url: jsFilePath,
             source_map: this._readSourceMap(mapFilePath),
-            version: revisionKey,
+            revision: revisionKey,
+            minified_file: this._readSourceMap(minifiedFilePath),
           };
 
-          log(`Uploading sourcemap to Rollbar: version=${revisionKey} minified_url=${jsFilePath}`, { verbose: true });
+          log(`Uploading sourcemap to Honeybadger: version=${revisionKey} minified_url=${jsFilePath}`, { verbose: true });
           var promise = request({
-            uri: 'https://api.rollbar.com/api/1/sourcemap',
+            uri: 'https://api.honeybadger.io/v1/source_maps',
             method: 'POST',
             formData: formData
           });
@@ -89,15 +91,15 @@ module.exports = {
           return didDeployHook.call(this, context);
         }
 
-        var accessServerToken = this.readConfig('accessServerToken');
+        var apiKey = this.readConfig('apiKey');
         var environment = this.readConfig('environment');
         var revision = this.readConfig('revisionKey');
         var username = this.readConfig('username');
 
         var formData = {
-          access_token: accessServerToken,
-          environment: environment,
-          revision: revision,
+          api_key: apiKey,
+          "deploy[environment]": environment,
+          "deploy[revision]": revision,
         };
 
         if (username) {
@@ -105,7 +107,7 @@ module.exports = {
         }
 
         return request({
-          uri: 'https://api.rollbar.com/api/1/deploy',
+          uri: 'https://api.honeybadger.io/v1/deploys',
           method: 'POST',
           formData: formData
         });
@@ -132,12 +134,16 @@ module.exports = {
   },
 };
 
-function fetchJSMapPairs(distFiles, publicUrl, distUrl) {
+function fetchJSMapPairs(distFiles, distPath, deployDistPath) {
   var jsFiles = indexByBaseFilename(fetchFilePaths(distFiles, '', 'js'));
+
   return fetchFilePaths(distFiles, '', 'map').map(function(mapFile) {
+    var baseFileName = mapFile.replace(/\.map$/, '');
+
     return {
-      mapFile: distUrl + mapFile,
-      jsFile: publicUrl + jsFiles[getBaseFilename(mapFile)]
+      mapFile: deployDistPath + mapFile,
+      jsFile: distPath + baseFileName + '.js',
+      minifiedFile: deployDistPath + jsFiles[baseFileName],
     };
   });
 }
@@ -150,7 +156,7 @@ function indexByBaseFilename(files) {
 }
 
 function getBaseFilename(file) {
-  return file.replace(/-[0-9a-f]+\.(js|map)$/, '');
+  return file.replace(/(-[0-9a-f]+)?\.(js|map)$/, '');
 }
 
 function fetchFilePaths(distFiles, basePath, type) {
