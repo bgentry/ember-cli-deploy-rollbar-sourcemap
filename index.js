@@ -142,7 +142,7 @@ function fetchJSMapPairs(distFiles, publicUrl, deployDistPath) {
 
     return {
       mapFile: deployDistPath + mapFile,
-      jsFile: publicUrl + baseFileName + '.js',
+      jsFile: publicUrl + jsFiles[baseFileName],
       minifiedFile: deployDistPath + jsFiles[baseFileName],
     };
   });
