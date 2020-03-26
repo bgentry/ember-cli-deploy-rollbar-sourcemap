@@ -69,7 +69,7 @@ module.exports = {
             minified_file: this._readSourceMap(minifiedFilePath),
           };
 
-          log(`Uploading sourcemap to Honeybadger: version=${revisionKey} minified_url=${jsFilePath}`, { verbose: true });
+          log(`Uploading sourcemap to Honeybadger: version=${revisionKey} minified_url=${jsUrl}`, { verbose: true });
           var promise = request({
             uri: 'https://api.honeybadger.io/v1/source_maps',
             method: 'POST',
