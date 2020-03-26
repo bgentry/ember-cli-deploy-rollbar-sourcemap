@@ -54,16 +54,16 @@ module.exports = {
         var publicUrl = this.readConfig('publicUrl');
 
         var promiseArray = [];
-        var jsMapPairs = fetchJSMapPairs(distFiles, 'dist', distDir);
+        var jsMapPairs = fetchJSMapPairs(distFiles, publicUrl, distDir);
 
         for (var i = 0; i < jsMapPairs.length; i++) {
           var mapFilePath = jsMapPairs[i].mapFile;
-          var jsFilePath = jsMapPairs[i].jsFile;
+          var jsUrl = jsMapPairs[i].jsFile;
           var minifiedFilePath = jsMapPairs[i].minifiedFile;
 
           var formData = {
             api_key: apiKey,
-            minified_url: jsFilePath,
+            minified_url: jsUrl,
             source_map: this._readSourceMap(mapFilePath),
             revision: revisionKey,
             minified_file: this._readSourceMap(minifiedFilePath),
@@ -134,7 +134,7 @@ module.exports = {
   },
 };
 
-function fetchJSMapPairs(distFiles, distPath, deployDistPath) {
+function fetchJSMapPairs(distFiles, publicUrl, deployDistPath) {
   var jsFiles = indexByBaseFilename(fetchFilePaths(distFiles, '', 'js'));
 
   return fetchFilePaths(distFiles, '', 'map').map(function(mapFile) {
@@ -142,7 +142,7 @@ function fetchJSMapPairs(distFiles, distPath, deployDistPath) {
 
     return {
       mapFile: deployDistPath + mapFile,
-      jsFile: distPath + baseFileName + '.js',
+      jsFile: publicUrl + baseFileName + '.js',
       minifiedFile: deployDistPath + jsFiles[baseFileName],
     };
   });
