@@ -87,13 +87,6 @@ Rollbar server access token to allow uploading source maps to your account.
 
 The fully qualified domain name for your application e.g., `https://app.fancy-app.com`
 
-### enabled
-
-Defines internal `enabled` Rollbar config.
-
-*Default:* `true`
-*Alternatives:* `false`
-
 ### environment
 
 Defines internal `environment` Rollbar config.
@@ -101,26 +94,12 @@ Defines internal `environment` Rollbar config.
 *Default:* environment setting from ember-cli-deploy-build || `production`
 *Alternatives:* any other env
 
-### captureUncaught
-
-Defines internal `captureUncaught` Rollbar config.
-
-*Default:* `true`
-*Alternatives:* `false`
-
 ### username
 
 Rollbar `local_username` config that is displayed in Deploys section.
 
 *Default:* `unknown user`
 *Alternatives:* any string or function returning string
-
-### rollbarFileURI
-
-Defines the URI to download the Rollbar JS file.
-
-*Default:* `https://d37gvrvc0wt4s1.cloudfront.net/js/v1.8/rollbar.min.js`
-*Alternatives:* any string that points to the file (e.g. https://mycdn.com/js/rollbar.min.js)
 
 ### additionalFiles
 
