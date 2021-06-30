@@ -52,6 +52,9 @@ module.exports = {
         log('Uploading sourcemaps to Rollbar', { verbose: true });
 
         var publicUrl = this.readConfig('publicUrl');
+        if (publicUrl.endsWith('/')) {
+          publicUrl = publicUrl.slice(0, -1)
+        }
 
         var promiseArray = [];
         var jsMapPairs = fetchJSMapPairs(distFiles, publicUrl, distDir);
